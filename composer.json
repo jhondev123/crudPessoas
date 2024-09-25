@@ -1,0 +1,23 @@
+{
+    "name": "jhonattan/crud-pessoas",
+    "autoload": {
+        "psr-4": {
+            "Jhonattan\\CrudPessoas\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jhondev123",
+            "email": "jhonattan.curtarelli@outlook.com"
+        }
+    ],
+    "require": {
+        "psr/http-message": "^2.0",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "nyholm/psr7": "^1.8",
+        "coffeecode/router": "^2.0",
+        "vlucas/phpdotenv": "^5.6",
+        "twig/twig": "^3.0"
+    }
+}
