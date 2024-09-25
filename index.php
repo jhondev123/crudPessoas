@@ -5,9 +5,9 @@ use Dotenv\Dotenv;
 
 require_once __DIR__ . "/vendor/autoload.php";
 
+var_dump(getenv('DB_HOST'));exit();
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
-var_dump(getenv('DB_HOST'));exit();
 
 $router = new Router($_ENV['APP_URL']);
 $router->namespace("Jhonattan\CrudPessoas\Http\Controllers");
