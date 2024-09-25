@@ -12,10 +12,10 @@ $router = new Router($_ENV['APP_URL']);
 $router->namespace("Jhonattan\CrudPessoas\Http\Controllers");
 
 $router->get('/', 'PersonController:index');
+$router->get('/editar/{id}', 'PersonController:show');
 
 $router->group("error");
 $router->get("/{errcode}", "ErrorController:notFound");
-
 
 $router->dispatch();
 

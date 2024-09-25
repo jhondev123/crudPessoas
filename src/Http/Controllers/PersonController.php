@@ -9,6 +9,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Jhonattan\CrudPessoas\Infra\Repositories\PersonRepository;
 use Jhonattan\CrudPessoas\Application\UseCases\Person\IndexPersonUseCase;
+use Jhonattan\CrudPessoas\Application\UseCases\Person\ShowPersonUseCase;
 
 class PersonController
 {
@@ -16,15 +17,24 @@ class PersonController
     {
         $personRepository = new PersonRepository();
         $useCase = new IndexPersonUseCase($personRepository);
-        $persons = $useCase->execute();
+
         $loader = new FilesystemLoader(dirname(__DIR__, 2) . "/Views");
         $twig = new Environment($loader);
+
+        $persons = $useCase->execute();
         echo $twig->render('persons.html.twig', ['persons' => $persons]);
     }
 
     public function show($id)
     {
-        return new Response(200, [], "");
+        $personRepository = new PersonRepository();
+        $useCase = new ShowPersonUseCase($personRepository);
+
+        $loader = new FilesystemLoader(dirname(__DIR__, 2) . "/Views");
+        $twig = new Environment($loader);
+
+        $person = $useCase->execute($id);
+        echo $twig->render('person.html.twig', ['person' => $person]);
     }
     public function update(RequestInterface $request) {}
     public function store(RequestInterface $request) {}
