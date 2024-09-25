@@ -13,7 +13,7 @@
 		<div class="row my-4">
 			{% for person in persons %}
 				<div class="col-md-4">
-					<div class="card mb-3">
+					<div class="card mb-3" data-id='{{person.id}}'>
 						<div class="card-body">
 							<h5 class="card-title">{{ person.name }}</h5>
 							<p class="card-text">
@@ -24,12 +24,31 @@
 								<strong>Email:</strong>
 								{{ person.email }}
 							</p>
-							<a href="/editar/{{person.id}}" class="btn btn-warning">Editar</a>
-							<a href="" class="btn btn-danger">Excluir</a>
+							<a href="/pessoa/{{person.id}}" class="btn btn-warning">Editar</a>
+							<a class="btn btn-danger">Excluir</a>
 						</div>
 					</div>
 				</div>
 			{% endfor %}
 		</div>
 	</div>
+	<script>
+		document.querySelectorAll('.btn-danger').forEach(button => {
+button.addEventListener('click', function () {
+let confirmDelete = window.confirm('Deseja realmente excluir?');
+if (! confirmDelete) {
+return;
+}
+
+let card = this.closest('.card');
+let id = card.dataset.id;
+
+fetch (`/excluir/pessoa/${id}`, {method: 'GET'}).then(data => {
+card.remove();
+}).catch(error => {
+alert('Erro ao excluir');
+});
+});
+});
+	</script>
 {% endblock %}

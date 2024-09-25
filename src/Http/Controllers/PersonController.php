@@ -2,41 +2,85 @@
 
 namespace Jhonattan\CrudPessoas\Http\Controllers;
 
-use Twig\Environment;
-use Nyholm\Psr7\Response;
-use Twig\Loader\FilesystemLoader;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Exception;
+use Jhonattan\CrudPessoas\Application\Dtos\PersonDto;
 use Jhonattan\CrudPessoas\Infra\Repositories\PersonRepository;
-use Jhonattan\CrudPessoas\Application\UseCases\Person\IndexPersonUseCase;
 use Jhonattan\CrudPessoas\Application\UseCases\Person\ShowPersonUseCase;
+use Jhonattan\CrudPessoas\Application\UseCases\Person\IndexPersonUseCase;
+use Jhonattan\CrudPessoas\Application\UseCases\Person\InsertPersonUseCase;
+use Jhonattan\CrudPessoas\Application\UseCases\Person\UpdatePersonUseCase;
 
-class PersonController
+class PersonController extends Controller
 {
     public function index()
     {
         $personRepository = new PersonRepository();
         $useCase = new IndexPersonUseCase($personRepository);
 
-        $loader = new FilesystemLoader(dirname(__DIR__, 2) . "/Views");
-        $twig = new Environment($loader);
 
         $persons = $useCase->execute();
-        echo $twig->render('persons.html.twig', ['persons' => $persons]);
+        echo $this->twig()->render('persons.html.twig', ['persons' => $persons]);
     }
 
     public function show($id)
     {
+
         $personRepository = new PersonRepository();
         $useCase = new ShowPersonUseCase($personRepository);
-
-        $loader = new FilesystemLoader(dirname(__DIR__, 2) . "/Views");
-        $twig = new Environment($loader);
-
         $person = $useCase->execute($id);
-        echo $twig->render('person.html.twig', ['person' => $person]);
+
+        echo $this->twig()->render('person.html.twig', ['person' => $person]);
     }
-    public function update(RequestInterface $request) {}
-    public function store(RequestInterface $request) {}
-    public function destroy($id) {}
+    public function storeView()
+    {
+        echo $this->twig()->render('registerPerson.html.twig');
+    }
+    public function store()
+    {
+        $personRepository = new PersonRepository();
+        $useCase = new InsertPersonUseCase($personRepository);
+        $personDto = new PersonDto(
+            $_POST['name'],
+            $_POST['email'],
+            $_POST['phone']
+        );
+        try {
+            $useCase->execute($personDto);
+            header('Location: /');
+        } catch (\InvalidArgumentException $e) {
+            echo $this->twig()->render('registerPerson.html.twig', ['error' => $e->getMessage()]);
+        } catch (\Exception $e) {
+            echo $this->twig()->render('registerPerson.html.twig', ['error' => 'Erro inesperado']);
+        }
+    }
+    public function update()
+    {
+        $personRepository = new PersonRepository();
+        $useCase = new UpdatePersonUseCase($personRepository);
+
+        $personDto = new PersonDto(
+            $_POST['name'],
+            $_POST['email'],
+            $_POST['phone'],
+            $_POST['id']
+        );
+        try {
+            $useCase->execute($personDto);
+            header('Location: /');
+        } catch (\InvalidArgumentException $e) {
+            echo $this->twig()->render('person.html.twig', ['person' => $personDto, 'error' => $e->getMessage()]);
+        } catch (\Exception $e) {
+            echo $this->twig()->render('person.html.twig', ['person' => $personDto, 'error' => 'Erro inesperado']);
+        }
+    }
+    public function destroy($id)
+    {
+        $personRepository = new PersonRepository();
+        try {
+            $personRepository->delete($id);
+            http_response_code(204);
+        } catch (Exception $e) {
+            http_response_code(404);
+        }
+    }
 }

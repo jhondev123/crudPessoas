@@ -1,0 +1,36 @@
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - app
+
+  php:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - app
+
+  postgres: 
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: jhonattan
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: crud
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database.sql:/docker-entrypoint-initdb.d/init.sql  
+
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge

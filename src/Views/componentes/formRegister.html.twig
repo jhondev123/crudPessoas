@@ -1,0 +1,27 @@
+{% macro formulario(action_url, nome = '', email = '', phone = '',id='') %}
+
+	<form method="POST" action="{{ action_url }}" class="needs-validation" novalidate>
+		<div class="mb-3">
+			<label for="name" class="form-label">Nome</label>
+			<input type="text" class="form-control" id="name" name="name" value="{{ nome|default('') }}" required>
+			<div class="invalid-feedback">
+				O nome é obrigatório.
+			</div>
+		</div>
+
+		<div class="mb-3">
+			<label for="email" class="form-label">Email</label>
+			<input type="email" class="form-control" id="email" name="email" value="{{ email|default('') }}" required>
+			<div class="invalid-feedback">
+				Por favor, insira um email válido.
+			</div>
+		</div>
+
+		<div class="mb-3">
+			<label for="phone" class="form-label">Telefone</label>
+			<input type="tel" class="form-control" id="phone" name="phone" value="{{ phone|default('') }}">
+		</div>
+        <input type="hidden" name="id" value="{{ id }}">
+		<button type="submit" class="btn btn-primary">Enviar</button>
+	</form>
+{% endmacro %}

@@ -1,0 +1,20 @@
+{% extends './templates/base.html.twig' %}
+{% import 'componentes/formRegister.html.twig' as formRegister %}
+
+{% block title %}
+	Cadastro de Pessoa
+{% endblock %}
+
+
+{% block content %}
+	<div class='container'>
+		<h1 class='my-4 text-center'>Cadastro de Pessoa</h1>
+		{% if error is defined %}
+			<div class="alert alert-danger" role="alert">
+				{{ error }}
+			</div>
+		{% endif %}
+		{{ formRegister.formulario('/cadastrar/pessoa', '', '', '') }}
+	</div>
+
+{% endblock %}

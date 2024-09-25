@@ -28,6 +28,10 @@ class PersonRepository
         $stmt->bindValue(':id', $id);
         $stmt->execute();
         $personData = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$personData) {
+            throw new \InvalidArgumentException("Pessoa não encontrada");
+        }
+
         return new PersonDto($personData['name'], $personData['email'], $personData['phone'], $personData['id']);
     }
     public function insert(Person $person): PersonDto

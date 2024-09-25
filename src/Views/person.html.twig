@@ -1,0 +1,20 @@
+{% extends './templates/base.html.twig' %}
+{% import 'componentes/formRegister.html.twig' as formRegister %}
+
+{% block title %}
+	{{ person.name }}
+{% endblock %}
+
+
+{% block content %}
+	<div class='container'>
+		{% if error is defined %}
+			<div class="alert alert-danger" role="alert">
+				{{ error }}
+			</div>
+		{% endif %}
+
+		{{ formRegister.formulario('/atualizar/pessoa', person.name, person.email, person.phone,person.id) }}
+	</div>
+
+{% endblock %}

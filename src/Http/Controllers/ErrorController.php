@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Jhonattan\CrudPessoas\Http\Controllers;
 
 class ErrorController
 {

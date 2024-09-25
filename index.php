@@ -1,34 +1,43 @@
 <?php
 
-use CoffeeCode\Router\Router;
 use Dotenv\Dotenv;
+use Jhonattan\CrudPessoas\Config\Bootstrap;
 
 require_once __DIR__ . "/vendor/autoload.php";
-if (file_exists(__DIR__ . "/.env")) {
 
+
+if (file_exists(__DIR__ . "/.env")) {
     $dotenv = Dotenv::createImmutable(__DIR__);
     $dotenv->load();
-}else{
-    $_ENV['APP_URL'] = getenv('APP_URL');
-    $_ENV['DB_HOST'] = getenv('DB_HOST');
-    $_ENV['DB_PORT'] = getenv('DB_PORT');
-    $_ENV['DB_DATABASE'] = getenv('DB_DATABASE');
-    $_ENV['DB_USERNAME'] = getenv('DB_USERNAME');
-    $_ENV['DB_PASSWORD'] = getenv('DB_PASSWORD');
+} else {
+    Bootstrap::mountEnv();
 }
 
-$router = new Router($_ENV['APP_URL']);
-$router->namespace("Jhonattan\CrudPessoas\Http\Controllers");
+$router = new AltoRouter();
+$router->map('GET', '/', 'Jhonattan\CrudPessoas\Http\Controllers\PersonController:index', 'home');
 
-$router->get('/', 'PersonController:index');
-$router->get('/editar/{id}', 'PersonController:show');
+$router->map('GET', '/pessoa/[i:id]', 'Jhonattan\CrudPessoas\Http\Controllers\PersonController:show', 'show');
+$router->map('POST', '/atualizar/pessoa', 'Jhonattan\CrudPessoas\Http\Controllers\PersonController:update', 'update');
 
-$router->group("error");
-$router->get("/{errcode}", "ErrorController:notFound");
+$router->map('GET', '/cadastrar/pessoa', 'Jhonattan\CrudPessoas\Http\Controllers\PersonController:storeView', 'storeView');
+$router->map('POST', '/cadastrar/pessoa', 'Jhonattan\CrudPessoas\Http\Controllers\PersonController:store', 'store');
 
-$router->dispatch();
+$router->map('GET', '/excluir/pessoa/[i:id]', 'Jhonattan\CrudPessoas\Http\Controllers\PersonController:destroy', 'destroy');
 
 
-if ($router->error()) {
-    $router->redirect("/error/{$router->error()}");
+$match = $router->match();
+
+if ($match) {
+    list($controller, $method) = explode(':', $match['target']);
+
+    if (class_exists($controller) && method_exists($controller, $method)) {
+        $controllerInstance = new $controller();
+        call_user_func_array([$controllerInstance, $method], $match['params']);
+    } else {
+        http_response_code(404);
+        echo "404 Not Found";
+    }
+} else {
+    http_response_code(404);
+    echo "404 Not Found";
 }
