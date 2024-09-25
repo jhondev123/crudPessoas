@@ -6,6 +6,9 @@
 
 {% block content %}
 	<div class='container'>
+		<div class='d-flex justify-content-end my-4'>
+			<a class="btn btn-primary" href="/cadastrar/pessoa">Cadastrar Pessoa</a>
+		</div>
 		<h2 class='text-center'>Lista de Pessoas</h2>
 		<div class="row my-4">
 			{% for person in persons %}
